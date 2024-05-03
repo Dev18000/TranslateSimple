@@ -1,0 +1,64 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>TranslateSimple</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+
+   
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <!--todo : add lang change vue-->
+            <select @bind="Traduction" class="switchLanguage">
+                <option value="fr-FR">Français</option>
+                <option value="en-US">English</option>
+                <option value="es-ES">Español</option>
+                <option value="de-DE">Deutsch</option>
+            </select>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    string LangTranslate = "";
+    string DrapeauTranslate = "";
+    public string culture = "";
+
+    private string Traduction
+    {
+        get
+        {
+            return LangTranslate;
+        }
+        set
+        {
+            LangTranslate = value;
+            DrapeauTranslate = $"images/{LangTranslate}.png";
+            OnSelected(value);
+            //run your process here to handle dropdown changes
+        }
+    }
+
+    private async void OnSelected(string val)
+    {
+        culture = val;//(string)e.Value;
+                      // LangTranslate = culture;
+
+        var uri = new Uri(Navigation.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var query = $"?culture={Uri.EscapeDataString(culture)}&" +
+                    $"redirectionUri={Uri.EscapeDataString(uri)}";
+
+        LangTranslate = val;
+        var writeCookies = await JsRuntime.InvokeAsync<object>("setCookie", "langue", val, 30);
+        await LocalStorageServices.SetSessionString("langue", val);
+        Navigation.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+    }
+}

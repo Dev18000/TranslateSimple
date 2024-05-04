@@ -73,7 +73,7 @@ main {
 .switchLanguage {
     width: 75px;
     margin: 10px;
-    font-family: var(--fontNessy);
+    font-family: Arial;
     background-color: transparent;
     cursor: pointer;
     border: none;
